@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
 import { addItem } from './CartSlice';
+
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [addedToCart, setAddedToCart] = useState(true)
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-    const handleAddToCart = (product) => {
-  dispatch(addItem(product)); // Dispatch the action to add the product to the cart (Redux action)
+    const dispatch = useDisbatch();
 
-  setAddedToCart((prevState) => ({ // Update the local state to reflect that the product has been added
-    ...prevState, // Spread the previous state to retain existing entries
-    [product.name]: true, // Set the current product's name as a key with value 'true' to mark it as added
-  }));
-};
+    const cartItems = useSelector((state) => state.cart.items);
+    const totalItems = cartItems.reduct((total, item) => total + item.quantity, 0);
+
+    const [disabledButtons, setDisabledButtons] = useStat({});
+    
 
     const plantsArray = [
         {
@@ -243,6 +243,15 @@ function ProductList({ onHomeClick }) {
         textDecoration: 'none',
     }
 
+     const handleAddToCart = (categoryIndex, plantIndex, plant) => {
+  dispatch(addItem(product)); // Dispatch the action to add the product to the cart (Redux action)
+
+  setAddedToCart((prevState) => ({ // Update the local state to reflect that the product has been added
+    ...prevState, // Spread the previous state to retain existing entries
+    ['${categoryIndex}-${plantIndex}']: true, // Set the current product's name as a key with value 'true' to mark it as added
+  }));
+};
+
     const handleHomeClick = (e) => {
         e.preventDefault();
         onHomeClick();
@@ -251,6 +260,7 @@ function ProductList({ onHomeClick }) {
     const handleCartClick = (e) => {
         e.preventDefault();
         setShowCart(true); // Set showCart to true when cart icon is clicked
+        setShowPlants(false);
     };
     const handlePlantsClick = (e) => {
         e.preventDefault();
